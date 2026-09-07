@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_URL = 'https://localhost:7156/api/Role';
+// const API_URL = 'https://localhost:7156/api/Role';
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_URL || 'https://rolebase-api-2.onrender.com'
+).replace(/\/$/, '');
+const API_URL = `${API_BASE_URL}/api/Role`;
 
 const getAuthHeader = () => {
   const token = localStorage.getItem('token');
