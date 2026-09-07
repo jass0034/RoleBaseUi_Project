@@ -1,26 +1,33 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #14213d;
+  --paper: #f8fafc;
+  --brand: #375dfb;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+* { box-sizing: border-box; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-manrope), Arial, sans-serif;
+  overflow-x: hidden;
 }
+
+h1, h2, h3, h4 { font-family: var(--font-space-grotesk), sans-serif; }
+
+::selection { background: #b9c8ff; color: #14213d; }
+
+.font-display { font-family: var(--font-space-grotesk), sans-serif; }
+.cursor-dot, .cursor-ring { pointer-events: none; position: fixed; z-index: 100; border-radius: 9999px; mix-blend-mode: difference; }
+.cursor-dot { width: 7px; height: 7px; background: #fff; }
+.cursor-ring { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid rgba(255,255,255,.85); background: rgba(255,255,255,.03); }
+.cursor-label { color: #fff; font-family: var(--font-manrope), sans-serif; font-size: 7px; font-weight: 800; letter-spacing: .06em; opacity: 0; }
+
+@media (pointer: coarse) { .cursor-dot, .cursor-ring { display: none; } }
+@media (pointer: fine) { a, button, input, select { cursor: none; } }
+
+.reveal-word { display: inline-block; }
