@@ -6,6 +6,40 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, BadgeCheck, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { sendOtp, verifyOtp } from '../../services/login-api/pages';
 
+const getRoleFromToken = (token) => {
+  try {
+    const payloadSegment = token?.split('.')?.[1];
+
+    if (!payloadSegment) {
+      return null;
+    }
+
+    const base64 = payloadSegment.replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, '=')));
+    const roleKey = Object.keys(payload).find((key) => {
+      const normalizedKey = key.toLowerCase();
+
+      return normalizedKey === 'role' || normalizedKey.endsWith('/role');
+    });
+    const role = roleKey ? payload[roleKey] : null;
+
+    return Array.isArray(role) ? role[0] : role;
+  } catch {
+    return null;
+  }
+};
+
+const getRoleFromLoginResponse = (responseData) => {
+  const role =
+    responseData?.role ??
+    responseData?.roleName ??
+    responseData?.user?.role ??
+    responseData?.user?.roleName ??
+    getRoleFromToken(responseData?.token);
+
+  return typeof role === 'string' ? role.trim().toLowerCase() : null;
+};
+
 const initialData = {
   name: '',
   email: '',
@@ -186,18 +220,18 @@ function Login() {
       }
 
       const expiryTime = Date.now() + 30 * 60 * 1000;
+      const role = getRoleFromLoginResponse(responseData);
 
       localStorage.setItem('token', responseData.token);
+      localStorage.removeItem('role');
+      localStorage.removeItem('userName');
 
       if (responseData.userName) {
         localStorage.setItem('userName', responseData.userName);
       }
 
-      if (responseData.role) {
-        localStorage.setItem(
-          'role',
-          String(responseData.role).trim().toLowerCase()
-        );
+      if (role) {
+        localStorage.setItem('role', role);
       }
 
       localStorage.setItem('expiryTime', expiryTime.toString());
